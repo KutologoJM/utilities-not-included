@@ -1,7 +1,8 @@
 # Utilities Not Included
 
-## This project is a re-code of [Oni Utility Suite](https://github.com/KutologoJM/oni-utility-suite) and is still in early development.
-### For progress updates and insight into my design decisions please visit my devblog at [jezrastudio.online](https://jezrastudio.online/dev-blog)
+ This project is a re-code of [Oni Utility Suite](https://github.com/KutologoJM/oni-utility-suite) and is still in early development.
+<br>
+ For progress updates and insight into my design decisions please visit my devblog at [jezrastudio.online](https://jezrastudio.online/dev-blog)
 ___
 
 # Usage
