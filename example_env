@@ -1,0 +1,15 @@
+# Django security
+SECRET_KEY=your-secret-key-here
+
+# Debug mode (True/False)
+DEBUG=False
+
+# Hosts allowed to connect (comma-separated)
+ALLOWED_HOSTS=127.0.0.1,localhost
+
+# CORS origins (comma-separated, optional if no CORS needed)
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+
+# Postgres database setup
+DATABASE_URL_PROD=postgresql-link-here
+DATABASE_URL_DEV=postgresql-link-here
