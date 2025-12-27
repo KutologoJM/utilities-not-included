@@ -47,7 +47,8 @@ class Recipe(models.Model):
     food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT, related_name="recipe")
 
     is_ingredient = models.BooleanField(default=False)
-    ingredients = models.ManyToManyField("self",  blank=True, through="RecipeIngredient", related_name="used_in", symmetrical=False)
+    ingredients = models.ManyToManyField("self", blank=True, through="RecipeIngredient", related_name="used_in",
+                                         symmetrical=False)
 
     class Meta:
         verbose_name = "Recipe"
