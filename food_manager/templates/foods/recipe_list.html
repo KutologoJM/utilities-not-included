@@ -2,23 +2,14 @@
 {% load static %}
 {% block head_title %} Template {% endblock %}
 {% block extra_head_element %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet">
-    <style>
-        .jersey-15-regular {
-            font-family: "Jersey 15", sans-serif;
-            font-weight: 400;
-            font-style: normal;
-        }
-    </style>
+
 {% endblock %}
 {% block body_content %}
-    <main class=" bg-base-200 border border-error min-h-1/2 p-6">
-        <div class="flex justify-center gap-4">
+    <main class=" bg-base-200 border border-error p-6 w-full h-full">
+        <div class="text-center">
 
             {% for recipe in recipes %}
-                <div class="hover-3d">
+                <div class="hover-3d m-4">
                     <!-- content -->
                     <div class="block bg-white border w-lg text-center rounded-xl">
 
@@ -36,37 +27,25 @@
                             <h2 id="description" class="text-black text-3xl m-2">
                                 {{ recipe.description }}
                             </h2>
-                            <div>
-                                <div id="quality" class="m-1">
-                                    <div class="card bg-[#0060AF] text-white">
-                                        <div class="card-body items-center text-center">
-                                            <h2 class="card-title">
-                                                {{ recipe.food_quality }}
-                                            </h2>
-                                        </div>
+                            <div id="quality" class="m-1">
+                                <div class="card bg-[#0060AF] text-white">
+                                    <div class="card-body items-center text-center">
+                                        <h2 class="card-title">
+                                            {{ recipe.food_quality }}
+                                        </h2>
                                     </div>
                                 </div>
+                            </div>
 
-                                {# Sources container  #}
+                            <div class=""> {# This div holds the sources and the dlcs #}
                                 <div class="bg-[#0060AF] grid grid-cols-2 grid-rows-2 rounded-xl m-1">
 
                                     {% if recipe.sources.all|slice:":2"|length > 1 %}
+                                        {# TODO Move this so it encompasses the sources + dlc section together #}
+
                                         <div id="source" class="row-span-2">
+                                            {#  TODO this is so that when there are 2 sources the dlc section expands with a diff style #}
                                             {% for source in recipe.sources.all %}
-                                                <div class="card card-side bg-white m-2 max-h-1/2">
-                                                    <figure>
-                                                        <img
-                                                                src="{{ source.image_url }}"
-                                                                alt="{{ source.name }}"
-                                                                class="m-2 w-13 h-13 object-contain"
-                                                        />
-                                                    </figure>
-                                                    <div class="card-body">
-                                                        <h2 class="card-title">
-                                                            {{ source.name }}
-                                                        </h2>
-                                                    </div>
-                                                </div>
                                                 <div class="card card-side bg-white m-2 max-h-1/2">
                                                     <figure>
                                                         <img
@@ -83,6 +62,23 @@
                                                 </div>
                                             {% endfor %}
                                         </div>
+                                        <div id="dlc" class="row-span-2 content-center">
+                                            <div class="card bg-white m-2 h-39">
+                                                <figure>
+                                                    <img
+                                                            src="https://oxygennotincluded.wiki.gg/images/Logo.png"
+                                                            alt="{{ recipe.dlc_name }}"
+                                                            class="m-2 w-full h-30 object-contain"
+                                                    />
+                                                </figure>
+                                                <div class="card-body p-2 mx-auto">
+                                                    <h2 class="card-title">
+                                                        {{ recipe.dlc_name }}
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </div>
+
 
                                     {% elif recipe.sources.all %}
 
@@ -104,26 +100,27 @@
                                                 </div>
                                             {% endfor %}
                                         </div>
+                                        <div id="dlc" class="row-span-2 content-center">
+                                            <div class="card card-side bg-white m-2 max-h-full">
+                                                <figure>
+                                                    <img
+                                                            src="{{ recipe.dlc_image_url }}"
+                                                            alt="{{ recipe.dlc_name }}"
+                                                            class="m-2 w-13 h-13 object-contain"
+                                                    />
+                                                </figure>
+                                                <div class="card-body p-2">
+                                                    <h2 class="card-title">
+                                                        {{ recipe.dlc_name }}
+                                                    </h2>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                     {% else %}
                                         no sources
                                     {% endif %}
-
-                                    <div id="dlc" class="row-span-2 content-center">
-                                        <div class="card card-side bg-white m-2 max-h-full">
-                                            <figure>
-                                                <img
-                                                        src="{{ recipe.image_url }}"
-                                                        alt="{{ recipe.name }}"
-                                                        class="m-2 w-13 h-13 object-contain"
-                                                />
-                                            </figure>
-                                            <div class="card-body">
-                                                <h2 class="card-title">
-                                                    {{ recipe.name }}
-                                                </h2>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                 </div>
                             </div>
@@ -132,7 +129,7 @@
                             <div id="ingredients"
                                  class="bg-[#0060AF] flex flex-nowrap justify-between items-stretch m-1 rounded-xl">
 
-                                {% for recipe_ing in recipe.recipe_ingredients.all %}
+                                {% for recipe_ing in recipe.required_ingredients %}
                                     <div id="ingredient_card_container"
                                          class="bg-white flex flex-col items-center justify-between flex-[1_1_0] min-w-0 m-2 p-2 rounded-xl">
 
@@ -149,6 +146,28 @@
                                             {{ recipe_ing.unit }}
                                         </div>
                                     </div>
+                                {% endfor %}
+
+                                {% for recipe_ing in recipe.substitutable_ingredients %}
+                                    <div id="ingredient_card_container"
+                                         class="bg-white flex flex-col items-center justify-between flex-[1_1_0] min-w-0 m-2 p-2 rounded-xl">
+
+                                        <figure class="flex flex-1 items-center justify-center h-18 min-w-0">
+                                            <img src="{{ recipe_ing.ingredient.image_url }}"
+                                                 alt="A picture of a {{ recipe_ing.ingredient.name }}"
+                                                 class="max-h-full max-w-full object-contain">
+                                        </figure>
+                                        <h5 class="text-lg font-bold">
+                                            {{ recipe_ing.ingredient.name }}
+                                        </h5>
+                                        <div id="amount_required">
+                                            {{ recipe_ing.amount }}
+                                            {{ recipe_ing.unit }}
+                                        </div>
+                                    </div>
+                                    {% if not forloop.last %}
+                                        <div class="divider divider-horizontal divider-secondary">OR</div>
+                                    {% endif %}
                                 {% endfor %}
 
                             </div>
@@ -168,6 +187,7 @@
                 </div>
             {% endfor %}
         </div>
+
 
     </main>
 {% endblock %}

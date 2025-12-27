@@ -32,14 +32,14 @@ class Recipe(models.Model):
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
 
-    dlc_name = models.CharField(max_length=50, blank=True)
+    dlc_name = models.CharField(max_length=50, blank=True) # TODO convert into a model like food quality
     dlc_wiki_url = models.URLField(blank=True)
     dlc_image_url = models.URLField(blank=True)
 
     spoil_time = models.PositiveIntegerField(null=True, blank=True)
     kcal_per_kg = models.PositiveIntegerField(null=True, blank=True)
     food_gained = models.PositiveIntegerField()
-    unit = models.CharField(choices=Units, default=Units.KCAL, max_length=10)
+    unit = models.CharField(choices=Units, default=Units.KCAL, max_length=10) # redundant TODO remove
 
     slug = AutoSlugField(unique=True, populate_from='name')
 
@@ -49,6 +49,18 @@ class Recipe(models.Model):
     is_ingredient = models.BooleanField(default=False)
     ingredients = models.ManyToManyField("self", blank=True, through="RecipeIngredient", related_name="used_in",
                                          symmetrical=False)
+
+    @property
+    def required_ingredients(self):
+        return self.recipe_ingredients.filter(
+            role=RecipeIngredient.Roles.MAIN
+        )
+
+    @property
+    def substitutable_ingredients(self):
+        return self.recipe_ingredients.filter(
+            role=RecipeIngredient.Roles.ALTERNATE
+        )
 
     class Meta:
         verbose_name = "Recipe"
