@@ -32,19 +32,16 @@ class Recipe(models.Model):
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
 
-    dlc_name = models.CharField(max_length=50, blank=True) # TODO convert into a model like food quality
-    dlc_wiki_url = models.URLField(blank=True)
-    dlc_image_url = models.URLField(blank=True)
+    dlc = models.ForeignKey("FoodItemDLC", on_delete=models.PROTECT)
 
     spoil_time = models.PositiveIntegerField(null=True, blank=True)
     kcal_per_kg = models.PositiveIntegerField(null=True, blank=True)
-    food_gained = models.PositiveIntegerField()
-    unit = models.CharField(choices=Units, default=Units.KCAL, max_length=10) # redundant TODO remove
+    food_gained = models.CharField(max_length=100, blank=True)
 
     slug = AutoSlugField(unique=True, populate_from='name')
 
-    sources = models.ManyToManyField("FoodItemSource", blank=True)
-    food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT, related_name="recipe")
+    sources = models.ForeignKey("FoodItemSource", on_delete=models.PROTECT)
+    food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT)
 
     is_ingredient = models.BooleanField(default=False)
     ingredients = models.ManyToManyField("self", blank=True, through="RecipeIngredient", related_name="used_in",
@@ -53,13 +50,13 @@ class Recipe(models.Model):
     @property
     def required_ingredients(self):
         return self.recipe_ingredients.filter(
-            role=RecipeIngredient.Roles.MAIN
+            role=RecipeIngredient.Roles.REQUIRED
         )
 
     @property
     def substitutable_ingredients(self):
         return self.recipe_ingredients.filter(
-            role=RecipeIngredient.Roles.ALTERNATE
+            role=RecipeIngredient.Roles.SUBSTITUTABLE
         )
 
     class Meta:
@@ -82,10 +79,16 @@ class FoodItemSource(models.Model):
         return self.name
 
 
+class FoodItemDLC(models.Model):
+    name = models.CharField(max_length=50)
+    wiki_url = models.URLField()
+    image_url = models.URLField()
+
+
 class RecipeIngredient(models.Model):
     class Roles(models.TextChoices):
-        MAIN = "main", "Main"
-        ALTERNATE = "alt", "Alternate"
+        REQUIRED = "required", "Required"
+        SUBSTITUTABLE = "subst", "Substitutable"
 
     class Units(models.TextChoices):
         KCAL = "kcal", "Kcal"
@@ -95,7 +98,7 @@ class RecipeIngredient(models.Model):
 
     recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE, related_name="recipe_ingredients")
     ingredient = models.ForeignKey("Recipe", on_delete=models.CASCADE, related_name="ingredient_in")
-    role = models.CharField(choices=Roles, default=Roles.MAIN, max_length=10)
+    role = models.CharField(choices=Roles, default=Roles.REQUIRED, max_length=10)
     amount = models.PositiveIntegerField(default=0)
     unit = models.CharField(choices=Units, default=Units.KCAL, max_length=10)
 
@@ -105,10 +108,3 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"
-
-
-"""
-ingredient.recipe_links.all()     # All recipes using this ingredient
-recipe.ingredient_links.all()     # All ingredients in this recipe
-
-"""
