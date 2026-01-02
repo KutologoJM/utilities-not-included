@@ -1,0 +1,328 @@
+{% extends "foods/index.html" %}
+{% load static %}
+{% block head_title %} Test Page {% endblock %}
+{% block extra_head_element %}
+
+{% endblock %}
+{% block body_content %}
+    <main class="grid grid-cols-3">
+
+        {# Foods Table #}
+        <div class="col-span-2 m-4">
+            <label class="input w-full my-2 ">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="search" required placeholder="Search"/>
+            </label>
+            <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
+                <legend class="fieldset-legend">Login</legend>
+
+                <label class="label">Email</label>
+                <input type="email" class="input" placeholder="Email"/>
+
+                <label class="label">Password</label>
+                <input type="password" class="input" placeholder="Password"/>
+
+                <button class="btn btn-neutral mt-4">Login</button>
+            </fieldset>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                    <tr>
+                        <th>
+                            <label>
+                                <input type="checkbox" class="checkbox"/>
+                            </label>
+                        </th>
+                        <th>Name</th>
+                        <th>DLC</th>
+                        <th>Quality</th>
+                        <th>Spoil Time</th>
+                        <th>Kcal per kg</th>
+                        <th>Source</th>
+                        <th>Food gained</th>
+                        <th></th>
+                        {# needed? #}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- row 1 -->
+                    {% for recipe in recipes %}
+                        <tr>
+                            <th>
+                                <label>
+                                    <input type="checkbox" class="checkbox"/>
+                                </label>
+                            </th>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <div class="avatar">
+                                        <div class="mask mask-squircle h-12 w-12">
+                                            <img
+                                                    src="{{ recipe.image_url }}"
+                                                    alt="{{ recipe.name }}"/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">{{ recipe.name }}</div>
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <div class="avatar">
+                                        <div class="mask mask-squircle h-12 w-12">
+                                            <img
+                                                    src="{{ recipe.dlc_image_url }}"
+                                                    alt="{{ recipe.dlc_name }}"/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold">{{ recipe.dlc_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{ recipe.food_quality.quality }}
+                                <br/>
+                                <span class="badge badge-ghost badge-sm">{{ recipe.food_quality.morale_impact }}</span>
+                            </td>
+                            <td>{{ recipe.spoil_time }} cycles</td>
+                            <td>
+                                {{ recipe.kcal_per_kg }}
+                            </td>
+                            <td>
+                                {{ recipe.sources.first }}
+                            </td>
+                            <td>
+                                {{ recipe.food_gained }}
+                            </td>
+                            <th class="font-normal">
+                                <!-- Open the modal using ID.showModal() method -->
+                                <button class="btn"
+                                        onclick="{{ recipe.name|cut:" " }}.showModal()">Details</button>
+                                <dialog id="{{ recipe.name|cut:" " }}" class="modal">
+                                    <div class="modal-box w-xl max-w-2xl overflow-x-hidden">
+
+                                        <h3 class="text-lg font-bold">{{ recipe.name }} Details</h3>
+                                        <div class="hover-3d m-4">
+                                            <!-- content -->
+                                            <div class="block bg-white border w-lg text-center rounded-xl">
+
+                                                <div class="">
+
+                                                    <div class="bg-[#0060AF] text-white m-1 h-17 flex items-center justify-center rounded-xl">
+                                                        <h1 class="text-5xl">
+                                                            {{ recipe.name }}
+                                                        </h1>
+                                                    </div>
+
+                                                    <figure class="">
+                                                        <img src="{{ recipe.image_url }}"
+                                                             alt="Image of a {{ recipe.name }}" class="m-auto">
+                                                    </figure>
+                                                    <h2 id="description" class="text-black text-3xl m-2">
+                                                        {{ recipe.description }}
+                                                    </h2>
+                                                    <div id="quality" class="m-1">
+                                                        <div class="card bg-[#0060AF] text-white">
+                                                            <div class="card-body items-center text-center">
+                                                                <h2 class="card-title">
+                                                                    {{ recipe.food_quality }}
+                                                                </h2>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class=""> {# This div holds the sources and the dlcs #}
+                                                        <div class="bg-[#0060AF] grid grid-cols-2 grid-rows-2 rounded-xl m-1">
+
+                                                            {% if recipe.sources.all|slice:":2"|length > 1 %}
+                                                                {# TODO Move this so it encompasses the sources + dlc section together #}
+
+                                                                <div id="source" class="row-span-2">
+                                                                    {#  TODO this is so that when there are 2 sources the dlc section expands with a diff style #}
+                                                                    {% for source in recipe.sources.all %}
+                                                                        <div class="card card-side bg-white m-2 max-h-1/2">
+                                                                            <figure>
+                                                                                <img
+                                                                                        src="{{ source.image_url }}"
+                                                                                        alt="{{ source.name }}"
+                                                                                        class="m-2 w-13 h-13 object-contain"
+                                                                                />
+                                                                            </figure>
+                                                                            <div class="card-body">
+                                                                                <h2 class="card-title">
+                                                                                    {{ source.name }}
+                                                                                </h2>
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                                <div id="dlc" class="row-span-2 content-center">
+                                                                    <div class="card bg-white m-2 h-39">
+                                                                        <figure>
+                                                                            <img
+                                                                                    src="https://oxygennotincluded.wiki.gg/images/Logo.png"
+                                                                                    alt="{{ recipe.dlc_name }}"
+                                                                                    class="m-2 w-full h-30 object-contain"
+                                                                            />
+                                                                        </figure>
+                                                                        <div class="card-body p-2 mx-auto">
+                                                                            <h2 class="card-title">
+                                                                                {{ recipe.dlc_name }}
+                                                                            </h2>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                            {% elif recipe.sources.all %}
+
+                                                                <div id="source" class="row-span-2 content-center">
+                                                                    {% for source in recipe.sources.all %}
+                                                                        <div class="card card-side bg-white m-2 max-h-full">
+                                                                            <figure>
+                                                                                <img
+                                                                                        src="{{ source.image_url }}"
+                                                                                        alt="{{ source.name }}"
+                                                                                        class="m-2 w-13 h-13 object-contain"
+                                                                                />
+                                                                            </figure>
+                                                                            <div class="card-body">
+                                                                                <h2 class="card-title">
+                                                                                    {{ source.name }}
+                                                                                </h2>
+                                                                            </div>
+                                                                        </div>
+                                                                    {% endfor %}
+                                                                </div>
+                                                                <div id="dlc" class="row-span-2 content-center">
+                                                                    <div class="card card-side bg-white m-2 max-h-full">
+                                                                        <figure>
+                                                                            <img
+                                                                                    src="{{ recipe.dlc_image_url }}"
+                                                                                    alt="{{ recipe.dlc_name }}"
+                                                                                    class="m-2 w-13 h-13 object-contain"
+                                                                            />
+                                                                        </figure>
+                                                                        <div class="card-body p-2">
+                                                                            <h2 class="card-title">
+                                                                                {{ recipe.dlc_name }}
+                                                                            </h2>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                            {% else %}
+                                                                no sources
+                                                            {% endif %}
+
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div id="ingredients"
+                                                         class="bg-[#0060AF] flex flex-nowrap justify-between items-stretch m-1 rounded-xl">
+
+                                                        {% for recipe_ing in recipe.required_ingredients %}
+                                                            <div id="ingredient_card_container"
+                                                                 class="bg-white flex flex-col items-center justify-between flex-[1_1_0] min-w-0 m-2 p-2 rounded-xl">
+
+                                                                <figure class="flex flex-1 items-center justify-center h-18 min-w-0">
+                                                                    <img src="{{ recipe_ing.ingredient.image_url }}"
+                                                                         alt="A picture of a {{ recipe_ing.ingredient.name }}"
+                                                                         class="max-h-full max-w-full object-contain">
+                                                                </figure>
+                                                                <h5 class="text-lg font-bold">
+                                                                    {{ recipe_ing.ingredient.name }}
+                                                                </h5>
+                                                                <div id="amount_required">
+                                                                    {{ recipe_ing.amount }}
+                                                                    {{ recipe_ing.unit }}
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+
+                                                        {% for recipe_ing in recipe.substitutable_ingredients %}
+                                                            <div id="ingredient_card_container"
+                                                                 class="bg-white flex flex-col items-center justify-between flex-[1_1_0] min-w-0 m-2 p-2 rounded-xl">
+
+                                                                <figure class="flex flex-1 items-center justify-center h-18 min-w-0">
+                                                                    <img src="{{ recipe_ing.ingredient.image_url }}"
+                                                                         alt="A picture of a {{ recipe_ing.ingredient.name }}"
+                                                                         class="max-h-full max-w-full object-contain">
+                                                                </figure>
+                                                                <h5 class="text-lg font-bold">
+                                                                    {{ recipe_ing.ingredient.name }}
+                                                                </h5>
+                                                                <div id="amount_required">
+                                                                    {{ recipe_ing.amount }}
+                                                                    {{ recipe_ing.unit }}
+                                                                </div>
+                                                            </div>
+                                                            {% if not forloop.last %}
+                                                                <div class="divider divider-horizontal divider-secondary">
+                                                                    OR
+                                                                </div>
+                                                            {% endif %}
+                                                        {% endfor %}
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <!-- 8 empty divs needed for the 3D effect -->
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                        <div class="modal-action">
+                                            <form method="dialog">
+                                                <!-- if there is a button in form, it will close the modal -->
+                                                <button class="btn">Close</button>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </dialog>
+                            </th>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <!-- foot -->
+                    <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>DLC</th>
+                        <th>Quality</th>
+                        <th>Spoil Time</th>
+                        <th>Kcal per kg</th>
+                        <th>Source</th>
+                        <th>Food gained</th>
+                        <th></th>
+                        {# needed? #}
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        {# Filters sidebar #}
+        <div class="col-span-1 bg-base-200">
+
+
+            {% for recipe in recipes %}
+
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}
