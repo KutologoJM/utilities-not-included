@@ -84,6 +84,9 @@ class FoodItemDLC(models.Model):
     wiki_url = models.URLField()
     image_url = models.URLField()
 
+    def __str__(self):
+        return self.name
+
 
 class RecipeIngredient(models.Model):
     class Roles(models.TextChoices):

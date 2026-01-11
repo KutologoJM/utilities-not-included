@@ -1,51 +1,34 @@
-{% extends "foods/index.html" %}
-{% load static %}
-{% block head_title %} Test Page {% endblock %}
-{% block extra_head_element %}
-
-{% endblock %}
-{% block body_content %}
-    <main id="recipe-list" class="grid grid-cols-3">
-
+<div id="recipe-list">
+    {% if recipes %}
         {# Foods Table #}
-        <div class="col-span-2 m-4">
-            <label class="input w-full my-2 ">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" required placeholder="Search"/>
-            </label>
-            <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4">
-                <legend class="fieldset-legend">Login</legend>
+        <section class="m-4">
 
-                <label class="label">Email</label>
-                <input type="email" class="input" placeholder="Email"/>
-
-                <label class="label">Password</label>
-                <input type="password" class="input" placeholder="Password"/>
-
-                <button class="btn btn-neutral mt-4">Login</button>
-            </fieldset>
             <div class="overflow-x-auto">
-                <table class="table">
+                <table id="recipes-table" class="table">
                     <!-- head -->
                     <thead>
                     <tr>
                         <th>
                             <label>
-                                <input type="checkbox" class="checkbox"/>
+
                             </label>
                         </th>
                         <th>Name</th>
                         <th>DLC</th>
-                        <th>Quality</th>
+                        <th>Quality
+                            <button class="btn btn-primary" hx-target="#table-body">
+                                Order by me
+                            </button>
+                        </th>
                         <th>Spoil Time</th>
                         <th>Kcal per kg</th>
                         <th>Source</th>
                         <th>Food gained</th>
-                        <th></th>
+                        <th>Preview</th>
                         {# needed? #}
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="table-body">
                     <!-- row 1 -->
                     {% for recipe in recipes %}
                         <tr>
@@ -101,7 +84,8 @@
                             <th class="font-normal">
                                 <!-- Open the modal using ID.showModal() method -->
                                 <button class="btn"
-                                        onclick="{{ recipe.name|cut:" " }}.showModal()">Details</button>
+                                        onclick="{{ recipe.name|cut:" " }}.showModal()">Details
+                                </button>
                                 <dialog id="{{ recipe.name|cut:" " }}" class="modal">
                                     <div class="modal-box w-xl max-w-2xl overflow-x-hidden">
 
@@ -315,14 +299,17 @@
                     </tfoot>
                 </table>
             </div>
+        </section>
+
+
+    {% else %}
+        <div role="alert" class="alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none"
+                 viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>Error! No recipes found.</span>
         </div>
-        {# Filters sidebar #}
-        <div class="col-span-1 bg-base-200">
-
-
-            {% for recipe in recipes %}
-
-            {% endfor %}
-        </div>
-    </main>
-{% endblock %}
+    {% endif %}
+</div>
