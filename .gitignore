@@ -159,3 +159,4 @@ node_modules/
 dist
 build
 
+/food_manager/logic/food_wiki.html
