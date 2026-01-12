@@ -12,7 +12,7 @@ def index(request):
 
 def search_recipes(request):
     query = request.GET.get('search', '')
-    order_by = request.GET.get('order_by', '')
+    order_by = request.GET.get('order_by', 'name')
 
     # use the query to filter recipes by name or slug
     recipes = Recipe.objects.filter(

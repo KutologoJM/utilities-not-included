@@ -5,7 +5,7 @@ from django_extensions.db.fields import AutoSlugField
 # Create your models here.
 
 class FoodQuality(models.Model):
-    quality = models.CharField(max_length=10)
+    quality = models.CharField(max_length=10, unique=True)
     morale_impact = models.IntegerField()
 
     def __str__(self):
@@ -41,7 +41,7 @@ class Recipe(models.Model):
     slug = AutoSlugField(unique=True, populate_from='name')
 
     sources = models.ForeignKey("FoodItemSource", on_delete=models.PROTECT)
-    food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT)
+    food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT, null=True)
 
     is_ingredient = models.BooleanField(default=False)
     ingredients = models.ManyToManyField("self", blank=True, through="RecipeIngredient", related_name="used_in",
@@ -80,7 +80,7 @@ class FoodItemSource(models.Model):
 
 
 class FoodItemDLC(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     wiki_url = models.URLField()
     image_url = models.URLField()
 
@@ -108,6 +108,7 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = "Recipe Ingredient"
         verbose_name_plural = "Recipe Ingredients"
+        unique_together = ("recipe", "ingredient")
 
     def __str__(self):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"

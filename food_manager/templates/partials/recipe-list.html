@@ -57,12 +57,12 @@
                                     <div class="avatar">
                                         <div class="mask mask-squircle h-12 w-12">
                                             <img
-                                                    src="{{ recipe.dlc_image_url }}"
-                                                    alt="{{ recipe.dlc_name }}"/>
+                                                    src="{{ recipe.dlc.image_url }}"
+                                                    alt="{{ recipe.dlc.name }}"/>
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="font-bold">{{ recipe.dlc_name }}</div>
+                                        <div class="font-bold">{{ recipe.dlc.name }}</div>
                                     </div>
                                 </div>
                             </td>
@@ -76,7 +76,7 @@
                                 {{ recipe.kcal_per_kg }}
                             </td>
                             <td>
-                                {{ recipe.sources.first }}
+                                {{ recipe.sources }}
                             </td>
                             <td>
                                 {{ recipe.food_gained }}
@@ -131,14 +131,14 @@
                                                                         <div class="card card-side bg-white m-2 max-h-1/2">
                                                                             <figure>
                                                                                 <img
-                                                                                        src="{{ source.image_url }}"
-                                                                                        alt="{{ source.name }}"
+                                                                                        src="{{ recipe.sources.image_url }}"
+                                                                                        alt="{{ recipe.sources.name }}"
                                                                                         class="m-2 w-13 h-13 object-contain"
                                                                                 />
                                                                             </figure>
                                                                             <div class="card-body">
                                                                                 <h2 class="card-title">
-                                                                                    {{ source.name }}
+                                                                                    {{ recipe.sources.name }}
                                                                                 </h2>
                                                                             </div>
                                                                         </div>
@@ -149,51 +149,13 @@
                                                                         <figure>
                                                                             <img
                                                                                     src="https://oxygennotincluded.wiki.gg/images/Logo.png"
-                                                                                    alt="{{ recipe.dlc_name }}"
+                                                                                    alt="{{ recipe.dlc.name }}"
                                                                                     class="m-2 w-full h-30 object-contain"
                                                                             />
                                                                         </figure>
                                                                         <div class="card-body p-2 mx-auto">
                                                                             <h2 class="card-title">
-                                                                                {{ recipe.dlc_name }}
-                                                                            </h2>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-
-                                                            {% elif recipe.sources.all %}
-
-                                                                <div id="source" class="row-span-2 content-center">
-                                                                    {% for source in recipe.sources.all %}
-                                                                        <div class="card card-side bg-white m-2 max-h-full">
-                                                                            <figure>
-                                                                                <img
-                                                                                        src="{{ source.image_url }}"
-                                                                                        alt="{{ source.name }}"
-                                                                                        class="m-2 w-13 h-13 object-contain"
-                                                                                />
-                                                                            </figure>
-                                                                            <div class="card-body">
-                                                                                <h2 class="card-title">
-                                                                                    {{ source.name }}
-                                                                                </h2>
-                                                                            </div>
-                                                                        </div>
-                                                                    {% endfor %}
-                                                                </div>
-                                                                <div id="dlc" class="row-span-2 content-center">
-                                                                    <div class="card card-side bg-white m-2 max-h-full">
-                                                                        <figure>
-                                                                            <img
-                                                                                    src="{{ recipe.dlc_image_url }}"
-                                                                                    alt="{{ recipe.dlc_name }}"
-                                                                                    class="m-2 w-13 h-13 object-contain"
-                                                                            />
-                                                                        </figure>
-                                                                        <div class="card-body p-2">
-                                                                            <h2 class="card-title">
-                                                                                {{ recipe.dlc_name }}
+                                                                                {{ recipe.dlc.name }}
                                                                             </h2>
                                                                         </div>
                                                                     </div>
@@ -201,7 +163,40 @@
 
 
                                                             {% else %}
-                                                                no sources
+
+                                                                <div id="source" class="row-span-2 content-center">
+                                                                        <div class="card card-side bg-white m-2 max-h-full">
+                                                                            <figure>
+                                                                                <img
+                                                                                        src="{{ recipe.sources.image_url }}"
+                                                                                        alt="{{ recipe.sources.name }}"
+                                                                                        class="m-2 w-13 h-13 object-contain"
+                                                                                />
+                                                                            </figure>
+                                                                            <div class="card-body">
+                                                                                <h2 class="card-title">
+                                                                                    {{ recipe.sources.name }}
+                                                                                </h2>
+                                                                            </div>
+                                                                        </div>
+
+                                                                </div>
+                                                                <div id="dlc" class="row-span-2 content-center">
+                                                                    <div class="card card-side bg-white m-2 max-h-full">
+                                                                        <figure>
+                                                                            <img
+                                                                                    src="{{ recipe.dlc.image_url }}"
+                                                                                    alt="{{ recipe.dlc.name }}"
+                                                                                    class="m-2 w-13 h-13 object-contain ml-5"
+                                                                            />
+                                                                        </figure>
+                                                                        <div class="card-body">
+                                                                            <h2 class="card-title">
+                                                                                {{ recipe.dlc.name }}
+                                                                            </h2>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             {% endif %}
 
                                                         </div>
