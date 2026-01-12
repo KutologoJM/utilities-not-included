@@ -1,8 +1,10 @@
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
+from django.db.models import Prefetch
 
 
 # Create your models here.
+
 
 class FoodQuality(models.Model):
     quality = models.CharField(max_length=10, unique=True)
@@ -27,7 +29,7 @@ class Recipe(models.Model):
         UNITS = "units", "Units"
         GRAMS = "g", "Grams"
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, db_index=True)
     wiki_url = models.URLField(blank=True)  # null = True not recommended
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
@@ -38,7 +40,7 @@ class Recipe(models.Model):
     kcal_per_kg = models.PositiveIntegerField(null=True, blank=True)
     food_gained = models.CharField(max_length=100, blank=True)
 
-    slug = AutoSlugField(unique=True, populate_from='name')
+    slug = AutoSlugField(unique=True, populate_from='name', db_index=True)
 
     sources = models.ForeignKey("FoodItemSource", on_delete=models.PROTECT)
     food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT, null=True)
@@ -49,15 +51,15 @@ class Recipe(models.Model):
 
     @property
     def required_ingredients(self):
-        return self.recipe_ingredients.filter(
-            role=RecipeIngredient.Roles.REQUIRED
-        )
+        # Use the prefetched list if available, fallback to DB query
+        return getattr(self, 'prefetched_required_ingredients',
+                       self.recipe_ingredients.filter(role=RecipeIngredient.Roles.REQUIRED))
 
     @property
     def substitutable_ingredients(self):
-        return self.recipe_ingredients.filter(
-            role=RecipeIngredient.Roles.SUBSTITUTABLE
-        )
+        # Use the prefetched list if available, fallback to DB query
+        return getattr(self, 'prefetched_required_ingredients',
+                       self.recipe_ingredients.filter(role=RecipeIngredient.Roles.SUBSTITUTABLE))
 
     class Meta:
         verbose_name = "Recipe"
@@ -112,3 +114,37 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"
+
+
+"""
+class Blueprint(models.Model):
+    class Goals(models.TextChoices):
+        support_x_dupes = "supp_x_dupes", "Support x dupes"
+        last_x_cycles = "last_x_cycles", "Last x cycles"
+    blueprint_name = models.CharField(max_length=50, unique=True)
+    colony_name = models.CharField(max_length=50)
+    num_of_duplicants = models.PositiveIntegerField(default=0)
+    hunger_setting = models.ForeignKey("HungerLevels", on_delete=models.PROTECT)
+    current_goal = models.CharField(choices=Goals, default=Goals.last_x_cycles, max_length=20)
+    chosen_foods = models.TextField(blank=True) # todo change to a m2m field with a through table for amounts
+
+    @property
+    def daily_kcal_needed(self):
+        # for ingredient in chosen ingredients, num dupes x difficulty
+        return 0
+
+    @property
+    def kcal_produced(self):
+        # for ingredient in chosen ingredients, ingredient.you get x num of chosen ingredient, ?move to through table
+        return 0
+
+    @property
+    def num_of_survivable_cycles(self):
+        # num of " cycles = food produced / num of dupes * hunger difficulty
+        return 0
+
+
+class HungerLevels(models.Model):
+    level = models.CharField(max_length=50)
+    kcal_required = models.PositiveIntegerField(default=1000)
+"""
