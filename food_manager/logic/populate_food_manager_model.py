@@ -98,6 +98,8 @@ def filter_food_gained(data):
 
 def populate_recipe_model(data):
     name = data['name']
+    if name == "Surf'n'Turf":
+        name = 'Surf n Turf'
     print(f'Executing for {name} ')
     wiki_url = f"https://oxygennotincluded.wiki.gg{data['wiki_url']}"
     image_url = f"https://oxygennotincluded.wiki.gg{data['image_url']}"

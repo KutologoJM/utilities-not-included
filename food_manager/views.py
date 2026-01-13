@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from food_manager.models import Recipe, RecipeIngredient
 from django.db.models import Q, Prefetch
 
@@ -32,17 +33,32 @@ def prefetch_all_recipes():
 
 def index(request):
     context = {}
-    recipes = prefetch_all_recipes()
-    context['recipes'] = recipes
-    return render(request, 'foods/recipes.html', context)
+    recipes = prefetch_all_recipes().order_by('name')
+
+    paginator = Paginator(recipes, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context['recipes'] = page_obj
+    context['page_obj'] = page_obj
+
+
+    return render(request, 'foods/test.html', context)
 
 
 def search_recipes(request):
     context = {}
-    query = request.GET.get('search', '')
+    query = request.GET.get('recipe-search', '')
     if query == '' or query is None:
-        recipes = prefetch_all_recipes()
-        context['recipes'] = recipes
+        recipes = prefetch_all_recipes().order_by('name')
+
+        paginator = Paginator(recipes, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['recipes'] = page_obj
+        context['page_obj'] = page_obj
+
     else:
         # use the query to filter recipes by name or slug
         recipes = Recipe.objects.filter(
@@ -67,6 +83,13 @@ def search_recipes(request):
             'recipe_ingredients__ingredient__sources',
             'recipe_ingredients__ingredient__dlc',
             'recipe_ingredients__ingredient__food_quality',
-        )
-        context['recipes'] = recipes
+        ).order_by('name')
+
+        paginator = Paginator(recipes, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['recipes'] = page_obj
+        context['page_obj'] = page_obj
+
     return render(request, "partials/recipe-list.html", context=context)
