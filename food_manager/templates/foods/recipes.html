@@ -1,0 +1,25 @@
+{% extends "foods/base.html" %}
+{% load static %}
+{% block head_title %}Recipes Page {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block body_content %}
+    <h1 class="text-4xl text-primary mb-4">
+        Recipes Manager
+    </h1>
+
+    <label class="input w-xl m-4">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+                type="text"
+                name="search"
+                placeholder="Search"
+                hx-get="{% url 'food_manager:search' %}"
+                hx-trigger="keyup delay:500ms"
+                hx-target="#recipe-list"
+                hx-indicator="#spinner"
+        />
+    {% include 'partials/spinner.html' %}
+    </label>
+
+    {% include 'partials/recipe-list.html' %}
+{% endblock %}

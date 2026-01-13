@@ -1,0 +1,19 @@
+{% for recipe in recipes %}
+
+    <div class="card w-96 bg-base-100 card-sm border m-4">
+        <div class="card-body">
+            <h2 class="card-title">{{ recipe.name }}</h2>
+            <p>Description</p>
+            <div class="justify-end card-actions">
+                <button class="btn btn-primary"
+                        hx-post=""
+                        hx-trigger="click"
+                        name="food_item"
+                        value="{{ recipe.name }}"
+                >Add to blueprint
+                </button>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
