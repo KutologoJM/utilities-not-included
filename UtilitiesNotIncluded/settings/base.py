@@ -55,6 +55,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "accounts.apps.AccountsConfig",
     "food_manager.apps.FoodManagerConfig",
+    "colony_manager.apps.ColonyManagerConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
