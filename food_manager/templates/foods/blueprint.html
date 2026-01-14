@@ -1,0 +1,22 @@
+{% extends "foods/base.html" %}
+{% load static %}
+{% block head_title %} Blueprint {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block body_content %}
+    <main class="mx-auto max-w-4xl text-center">
+        <div id="blueprint-display">
+            Hello world
+        </div>
+        {% for blueprint in blueprints %}
+            <h1 class="text-4xl font-bold">
+                {{ blueprint.name }}
+            </h1>
+            <p class="bg-base-300">
+
+                {% for food in blueprint.blueprintfoods_set.all %}
+                    {{ food }}
+                {% endfor %}
+            </p>
+        {% endfor %}
+    </main>
+{% endblock %}

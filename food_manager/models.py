@@ -116,6 +116,34 @@ class RecipeIngredient(models.Model):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"
 
 
+class Colony(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    difficulty = models.PositiveIntegerField(default=1000) # placeholder logic
+    population = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+
+class BlueprintFoods(models.Model):
+    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
+    blueprint = models.ForeignKey("Blueprint", on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.amount} x {self.recipe.name} for {self.blueprint.name}"
+
+class Blueprint(models.Model):
+    colony = models.ForeignKey("Colony", on_delete=models.PROTECT)
+    name = models.CharField(max_length=50, unique=True)
+    num_of_duplicants = models.PositiveIntegerField(default=0)
+    survivable_cycles = models.PositiveIntegerField(default=0)
+    selected_foods = models.ManyToManyField(
+        "Recipe", through="BlueprintFoods"
+    )
+
+    def __str__(self):
+        return f"{self.name} for {self.colony.name}"
+
 """
 class Blueprint(models.Model):
     class Goals(models.TextChoices):
@@ -147,4 +175,27 @@ class Blueprint(models.Model):
 class HungerLevels(models.Model):
     level = models.CharField(max_length=50)
     kcal_required = models.PositiveIntegerField(default=1000)
+
+
+class GameSettings(models.Model):
+    class GameModePresets(models.TextChoices):
+        SURVIVAL = "survival", "Survival"
+        NO_SWEAT = "no sweat", "No sweat"
+        CUSTOM ="custom", "Custom"
+    class AsteroidStyles(models.TextChoices):
+        CLASSIC = "classic", "Classic"
+        SPACED_OUT ="spaced_out", "Spaced Out"
+        THE_LAB = "the-lab", "The Lab"
+
+    preset = models.CharField(max_length=50)
+
+    worldgen_seen = models.PositiveIntegerField(default=0)
+    # hunger, durablity, radiation, stress reactions (bool)
+    # teleporters(bool), disesase, morale, meteor showers, stress
+    # care packaged, demolior impact
+
+    # model for asteroids and major colony / save file
+
+    def __str__(self):
+        return self.name
 """

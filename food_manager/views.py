@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from food_manager.models import Recipe, RecipeIngredient
+from food_manager.models import Recipe, RecipeIngredient, Blueprint
 from django.db.models import Q, Prefetch
+from .forms import FoodForm
 
 
 # Create your views here.
@@ -41,7 +42,7 @@ def index(request):
 
     context['recipes'] = page_obj
     context['page_obj'] = page_obj
-
+    context['form'] = FoodForm()
 
     return render(request, 'foods/test.html', context)
 
@@ -93,3 +94,9 @@ def search_recipes(request):
         context['page_obj'] = page_obj
 
     return render(request, "partials/recipe-list.html", context=context)
+
+
+def blueprint_display(request):
+    context = {}
+    context['blueprints'] = Blueprint.objects.all()
+    return render(request, 'foods/blueprint.html', context=context)
