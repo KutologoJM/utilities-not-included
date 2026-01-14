@@ -7,7 +7,7 @@ from .forms import FoodForm
 
 # Create your views here.
 
-def prefetch_all_recipes():
+def prefetch_all_recipes(info): #todo change from all to starting at prefetch related
     data = Recipe.objects.all().prefetch_related(
         Prefetch(
             'recipe_ingredients',
@@ -34,7 +34,7 @@ def prefetch_all_recipes():
 
 def index(request):
     context = {}
-    recipes = prefetch_all_recipes().order_by('name')
+    recipes = prefetch_all_recipes(info=0).order_by('name')
 
     paginator = Paginator(recipes, 5)
     page_number = request.GET.get('page')
@@ -52,6 +52,8 @@ def search_recipes(request):
     query = request.GET.get('recipe-search', '')
     if query == '' or query is None:
         recipes = prefetch_all_recipes().order_by('name')
+        # all_recipes = Recipe.objects.all()
+        # recipes = prefetch_all_recipes(all_recipes).order_by('name')
 
         paginator = Paginator(recipes, 5)
         page_number = request.GET.get('page')
