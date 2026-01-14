@@ -1,0 +1,32 @@
+{% extends "foods/base.html" %}
+{% load static %}
+{% block head_title %} Blueprint {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block body_content %}
+    <main class="mx-auto max-w-4xl text-center">
+        <div id="blueprint-display">
+            Hello world
+        </div>
+        {% for blueprint in blueprints %}
+            <h1 class="text-4xl font-bold">
+                Colony name: {{ blueprint.colony.name }}
+            </h1>
+            <h2 class="text-3xl font-bold">
+            Blueprint name: {{ blueprint.name }}
+            </h2>
+            <h3 class="text-2xl font-semibold">
+            Hunger: {{ blueprint.colony.hunger.kcal_required }} kcal per dupe
+            </h3>
+            <p class="bg-base-300">
+
+                {% for food in blueprint.blueprintfoods_set.all %}
+                    {{ food }}
+                {% endfor %}
+            </p>
+        {% endfor %}
+    </main>
+{% endblock %}
+
+FIlter out recipes where is ingredient = true
+this condition is true only if its solely considered to be an ingredient
+i.e tallow and raw egg

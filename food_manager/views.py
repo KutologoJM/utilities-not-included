@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from django.core.paginator import Paginator
-from food_manager.models import Recipe, RecipeIngredient
+from food_manager.models import Recipe, RecipeIngredient, Blueprint
 from django.db.models import Q, Prefetch
+from .forms import FoodForm
 
 
 # Create your views here.
 
-def prefetch_all_recipes():
+def prefetch_all_recipes(info): #todo change from all to starting at prefetch related
     data = Recipe.objects.all().prefetch_related(
         Prefetch(
             'recipe_ingredients',
@@ -33,7 +34,7 @@ def prefetch_all_recipes():
 
 def index(request):
     context = {}
-    recipes = prefetch_all_recipes().order_by('name')
+    recipes = prefetch_all_recipes(info=0).order_by('name')
 
     paginator = Paginator(recipes, 5)
     page_number = request.GET.get('page')
@@ -41,7 +42,7 @@ def index(request):
 
     context['recipes'] = page_obj
     context['page_obj'] = page_obj
-
+    context['form'] = FoodForm()
 
     return render(request, 'foods/test.html', context)
 
@@ -51,6 +52,8 @@ def search_recipes(request):
     query = request.GET.get('recipe-search', '')
     if query == '' or query is None:
         recipes = prefetch_all_recipes().order_by('name')
+        # all_recipes = Recipe.objects.all()
+        # recipes = prefetch_all_recipes(all_recipes).order_by('name')
 
         paginator = Paginator(recipes, 5)
         page_number = request.GET.get('page')
@@ -93,3 +96,9 @@ def search_recipes(request):
         context['page_obj'] = page_obj
 
     return render(request, "partials/recipe-list.html", context=context)
+
+
+def blueprint_display(request):
+    context = {}
+    context['blueprints'] = Blueprint.objects.all()
+    return render(request, 'foods/blueprint.html', context=context)

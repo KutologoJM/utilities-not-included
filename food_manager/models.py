@@ -1,6 +1,6 @@
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
-from django.db.models import Prefetch
+from colony_manager.models import Colony
 
 
 # Create your models here.
@@ -116,35 +116,23 @@ class RecipeIngredient(models.Model):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"
 
 
-"""
+class BlueprintFoods(models.Model):
+    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
+    blueprint = models.ForeignKey("Blueprint", on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.amount} x {self.recipe.name} for {self.blueprint.name}"
+
+
 class Blueprint(models.Model):
-    class Goals(models.TextChoices):
-        support_x_dupes = "supp_x_dupes", "Support x dupes"
-        last_x_cycles = "last_x_cycles", "Last x cycles"
-    blueprint_name = models.CharField(max_length=50, unique=True)
-    colony_name = models.CharField(max_length=50)
-    num_of_duplicants = models.PositiveIntegerField(default=0)
-    hunger_setting = models.ForeignKey("HungerLevels", on_delete=models.PROTECT)
-    current_goal = models.CharField(choices=Goals, default=Goals.last_x_cycles, max_length=20)
-    chosen_foods = models.TextField(blank=True) # todo change to a m2m field with a through table for amounts
+    colony = models.ForeignKey(Colony, on_delete=models.PROTECT)
+    name = models.CharField(max_length=50, unique=True)
+    supportable_dupes = models.PositiveIntegerField(default=0)
+    survivable_cycles = models.PositiveIntegerField(default=0)
+    selected_foods = models.ManyToManyField(
+        "Recipe", through="BlueprintFoods"
+    )
 
-    @property
-    def daily_kcal_needed(self):
-        # for ingredient in chosen ingredients, num dupes x difficulty
-        return 0
-
-    @property
-    def kcal_produced(self):
-        # for ingredient in chosen ingredients, ingredient.you get x num of chosen ingredient, ?move to through table
-        return 0
-
-    @property
-    def num_of_survivable_cycles(self):
-        # num of " cycles = food produced / num of dupes * hunger difficulty
-        return 0
-
-
-class HungerLevels(models.Model):
-    level = models.CharField(max_length=50)
-    kcal_required = models.PositiveIntegerField(default=1000)
-"""
+    def __str__(self):
+        return f"{self.name} for {self.colony.name}"
