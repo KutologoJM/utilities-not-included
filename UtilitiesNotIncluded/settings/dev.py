@@ -1,5 +1,5 @@
 # settings/local.py
-from .base import *
+from .base import *  # noqa: F403
 
 DEBUG = True
 TEMPLATE_DEBUG = True
@@ -10,14 +10,16 @@ INTERNAL_IPS = [
 ]
 
 
-INSTALLED_APPS += ["debug_toolbar", "django_browser_reload"]
+INSTALLED_APPS += ["debug_toolbar", "django_browser_reload"]  # noqa: F405
 
-MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")
-MIDDLEWARE.insert(3, "django_browser_reload.middleware.BrowserReloadMiddleware")
+MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")  # noqa: F405
+MIDDLEWARE.insert(
+    3, "django_browser_reload.middleware.BrowserReloadMiddleware"
+)  # noqa: F405
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL_DEV"),
+    "default": dj_database_url.config(  # noqa: F405
+        default=os.getenv("DATABASE_URL_DEV"),  # noqa: F405
         conn_max_age=600,
         ssl_require=True,
     )
