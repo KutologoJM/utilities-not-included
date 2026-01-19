@@ -1,0 +1,23 @@
+{% extends "cm_base.html" %}
+{% load static %}
+{% block head_title %} Colony Maker {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block body_content %}
+     <main>
+    <form
+    hx-post="{% url 'colony_manager:create_colony'%}"
+    hx-trigger="submit"
+    hx-target="#modal-content"
+>
+    {% csrf_token %}
+
+    {{ form.as_p }}
+    <button class="btn btn-accent">
+        Submit
+    </button>
+    <button class="btn btn-error" onclick="create_colony_modal.close()">
+        Close
+    </button>
+</form>
+    </main>
+{% endblock %}

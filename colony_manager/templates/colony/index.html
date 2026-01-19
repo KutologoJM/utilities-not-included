@@ -1,0 +1,15 @@
+{% extends "cm_base.html" %}
+{% load static %}
+{% block head_title %} Colonies {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block body_content %}
+    <main class="">
+        <div class="grid grid-cols-2 gap-4 m-2">
+            {% include 'colony/partials/add_new_colony.html' %}
+            {% for colony in colonies %}
+                {% include 'colony/partials/view_existing_colony.html' %}
+            {% endfor %}
+        </div>
+
+    </main>
+{% endblock %}

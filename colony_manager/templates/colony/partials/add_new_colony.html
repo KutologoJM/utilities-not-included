@@ -1,0 +1,29 @@
+<div id="add_colony" class="card card-border bg-base-200">
+    <div class="card-body">
+        <h2 class="card-title">Add new colony</h2>
+        <p>Add a new colony (save game).</p>
+        <div class="card-actions justify-end">
+            <!-- Open the modal using ID.showModal() method -->
+            <button
+                    class="btn btn-primary"
+                    onclick="create_colony_modal.showModal()"
+                    hx-get="{% url 'colony_manager:create_colony' %}"
+                    hx-target="#modal-content"
+                    hx-trigger="click delay:0ms"
+            >Create
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<dialog id="create_colony_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Create new colony!</h3>
+    <div id="modal-content">
+        Loading...
+    </div>
+    <div class="modal-action">
+    </div>
+  </div>
+</dialog>
