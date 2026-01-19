@@ -1,104 +1,77 @@
-from django.shortcuts import render
+from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
-from food_manager.models import Recipe, RecipeIngredient, Blueprint
-from django.db.models import Q, Prefetch
-from .forms import FoodForm
-
+from django.db.models import Prefetch, Q
+from django.shortcuts import render
+from food_manager.models import Blueprint, Recipe, RecipeIngredient
 
 # Create your views here.
 
-def prefetch_all_recipes(info): #todo change from all to starting at prefetch related
-    data = Recipe.objects.all().prefetch_related(
+
+def prefetch_recipes(
+    object_queryset,
+):
+    processed_data = object_queryset.prefetch_related(
         Prefetch(
-            'recipe_ingredients',
-            queryset=RecipeIngredient.objects.filter(role='required').select_related('ingredient'),
-            to_attr='prefetched_required_ingredients'
+            "recipe_ingredients",
+            queryset=RecipeIngredient.objects.filter(role="required").select_related(
+                "ingredient"
+            ),
+            to_attr="prefetched_required_ingredients",
         ),
         Prefetch(
-            'recipe_ingredients',
-            queryset=RecipeIngredient.objects.filter(role='subst').select_related('ingredient'),
-            to_attr='prefetched_subst_ingredients'
+            "recipe_ingredients",
+            queryset=RecipeIngredient.objects.filter(role="subst").select_related(
+                "ingredient"
+            ),
+            to_attr="prefetched_subst_ingredients",
         ),
-        'sources',
-        'dlc',
-        'ingredients',
-        'food_quality',
-        'recipe_ingredients',
-        'recipe_ingredients__ingredient',
-        'recipe_ingredients__ingredient__sources',
-        'recipe_ingredients__ingredient__dlc',
-        'recipe_ingredients__ingredient__food_quality',
+        "sources",
+        "dlc",
+        "ingredients",
+        "food_quality",
+        "recipe_ingredients",
+        "recipe_ingredients__ingredient",
+        "recipe_ingredients__ingredient__sources",
+        "recipe_ingredients__ingredient__dlc",
+        "recipe_ingredients__ingredient__food_quality",
     )
-    return data
+    return processed_data
 
 
-def index(request):
-    context = {}
-    recipes = prefetch_all_recipes(info=0).order_by('name')
-
-    paginator = Paginator(recipes, 5)
-    page_number = request.GET.get('page')
+def default_paginator(object_list, request):
+    paginator = Paginator(object_list, 5)
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    context['recipes'] = page_obj
-    context['page_obj'] = page_obj
-    context['form'] = FoodForm()
-
-    return render(request, 'foods/test.html', context)
+    return page_obj
 
 
-def search_recipes(request):
+def recipe_display(request):
     context = {}
-    query = request.GET.get('recipe-search', '')
-    if query == '' or query is None:
-        recipes = prefetch_all_recipes().order_by('name')
-        # all_recipes = Recipe.objects.all()
-        # recipes = prefetch_all_recipes(all_recipes).order_by('name')
+    if request.method == "GET":
+        objects = Recipe.objects.all()
+        recipes = prefetch_recipes(objects).order_by("name")
+        paginated_data = default_paginator(recipes, request)
+        context["recipes"] = paginated_data
+        return render(request, "foods/index.html", context=context)
 
-        paginator = Paginator(recipes, 5)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context['recipes'] = page_obj
-        context['page_obj'] = page_obj
-
+    elif request.method == "POST":
+        query = request.POST.get("recipe-search", "")
+        if query == "" or query is None:
+            objects = Recipe.objects.all()
+        else:
+            objects = Recipe.objects.filter(
+                Q(name__icontains=query) | Q(slug__icontains=query)
+            )
+        recipes = prefetch_recipes(objects).order_by("name")
+        paginated_data = default_paginator(recipes, request)
+        context["recipes"] = paginated_data
+        return render(request, "partials/recipe-list.html", context=context)
     else:
-        # use the query to filter recipes by name or slug
-        recipes = Recipe.objects.filter(
-            Q(name__icontains=query) | Q(slug__icontains=query)
-        ).prefetch_related(
-            Prefetch(
-                'recipe_ingredients',
-                queryset=RecipeIngredient.objects.filter(role='required').select_related('ingredient'),
-                to_attr='prefetched_required_ingredients'
-            ),
-            Prefetch(
-                'recipe_ingredients',
-                queryset=RecipeIngredient.objects.filter(role='subst').select_related('ingredient'),
-                to_attr='prefetched_subst_ingredients'
-            ),
-            'sources',
-            'dlc',
-            'ingredients',
-            'food_quality',
-            'recipe_ingredients',
-            'recipe_ingredients__ingredient',
-            'recipe_ingredients__ingredient__sources',
-            'recipe_ingredients__ingredient__dlc',
-            'recipe_ingredients__ingredient__food_quality',
-        ).order_by('name')
-
-        paginator = Paginator(recipes, 5)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context['recipes'] = page_obj
-        context['page_obj'] = page_obj
-
-    return render(request, "partials/recipe-list.html", context=context)
+        return HttpResponseNotFound("Invalid Request")
 
 
 def blueprint_display(request):
-    context = {}
-    context['blueprints'] = Blueprint.objects.all()
-    return render(request, 'foods/blueprint.html', context=context)
+    context = {}  # noqa
+    context["blueprints"] = Blueprint.objects.all()
+    return render(request, "foods/blueprint.html", context=context)

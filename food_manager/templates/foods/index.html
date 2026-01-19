@@ -1,0 +1,45 @@
+{% extends "foods/fm_base.html" %}
+{% load static %}
+{% block head_title %} Test Page {% endblock %}
+{% block extra_head_element %}
+
+{% endblock %}
+{% block body_content %}
+    <main class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-bold text-center">
+            Test Food Manager Index
+        </h1>
+        <div class="flex justify-center items-center">
+            <form>
+                {% csrf_token %}
+                <label for="recipe-search" class="input w-xl text-lg m-4">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                            type="text"
+                            name="recipe-search"
+                            placeholder="Search for a recipe..."
+                            hx-post="{% url 'food_manager:index' %}"
+                            hx-trigger="changed, keyup delay:500ms"
+                            hx-target="#recipe-items"
+                            hx-indicator="#spinner"
+                            hx-include="#page-state"
+                    >
+                    {% include 'partials/spinner.html' %}
+                    <input type="hidden" id="page-state" name="page" value="{{ page_obj.number }}">
+                </label>
+            </form>
+
+        </div>
+
+
+        <div id="recipe-items">
+            {% include "partials/recipe-list.html" %}
+        </div>
+
+        <div id="pagination" hx-swap-oob="true">
+            {% include "partials/pagination.html" %}
+        </div>
+
+
+    </main>
+{% endblock %}
