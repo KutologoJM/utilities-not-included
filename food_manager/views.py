@@ -2,7 +2,7 @@ from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.shortcuts import render
-from food_manager.models import Blueprint, Recipe, RecipeIngredient
+from food_manager.models import Recipe, RecipeIngredient
 
 # Create your views here.
 
@@ -69,9 +69,3 @@ def recipe_display(request):
         return render(request, "partials/recipe-list.html", context=context)
     else:
         return HttpResponseNotFound("Invalid Request")
-
-
-def blueprint_display(request):
-    context = {}  # noqa
-    context["blueprints"] = Blueprint.objects.all()
-    return render(request, "foods/blueprint.html", context=context)

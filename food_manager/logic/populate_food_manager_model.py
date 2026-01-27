@@ -3,7 +3,7 @@ import django
 import json
 from django.utils.text import slugify
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "UtilitiesNotIncluded.settings.base")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "UtilitiesNotIncluded.settings.dev")
 django.setup()
 
 from food_manager.models import (
@@ -175,5 +175,5 @@ with open("compiled_food_items.json") as json_file:
         # print(populate_sources_model(food_item))
         # print(populate_dlc_model(food_item))
         # print(populate_food_quality_model(food_item))
-        # print(filter_food_gained(food_item['food_gained']))
+        # print(filter_food_gained(food_item["food_gained"]))
         print(populate_recipe_model(food_item))
