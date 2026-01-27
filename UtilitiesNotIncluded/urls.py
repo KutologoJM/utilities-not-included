@@ -18,9 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from accounts.views import Dashboard
 
 
 urlpatterns = [
+    path("", Dashboard.as_view(), name="dashboard"),
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("food_manager/", include("food_manager.urls")),

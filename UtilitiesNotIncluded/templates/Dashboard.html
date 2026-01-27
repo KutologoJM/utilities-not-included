@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="space">
+<head>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}?v={{ timestamp }}">
+    <!--suppress JSUnresolvedLibraryURL -->
+    <script src="https://kit.fontawesome.com/f23e4a7e43.js"
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <script src="{% static 'js/htmx.min.js.js' %}"></script>
+    <title>
+        Dashboard
+    </title>
+
+</head>
+
+<body>
+
+<main>
+    <div class="text-center">
+        <h1>Dashboard</h1>
+
+
+        <div>
+            <h2>Colony Manager</h2>
+            <p>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:colony_index' %}">Colony</a></button>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:planetoid_index' colony='Test Colony' %}">Planetoid</a></button>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:blueprint_index' colony='Test Colony' planetoid='Test Planetoid' %}">Blueprint</a></button>
+            </p>
+        </div>
+
+    </div>
+</main>
+
+</body>
+
+</html>
