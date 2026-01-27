@@ -3,5 +3,22 @@
 {% block head_title %} Blueprint manager {% endblock %}
 {% block extra_head_element %} {% endblock %}
 {% block body_content %}
+    <main>
+        {% for blueprint in blueprints %}
 
+            <div class="card bg-base-100 w-96 shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">{{ blueprint.name}}</h2>
+                    <p>
+                        Supportable Dupes: {{ blueprint.supportable_dupes }}
+                        Survivable Cycles:  {{ blueprint.survivable_cycles }}
+                    </p>
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-primary">Edit</button>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    </main>
 {% endblock %}
