@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="Poetry (UtilitiesNotIncluded)" />
+    <option name="sdkName" value="uv (utilities-not-included)" />
   </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="uv (utilities-not-included)" project-jdk-type="Python SDK" />
+  <component name="TyConfiguration">
+    <option name="inspections" value="false" />
+  </component>
 </project>

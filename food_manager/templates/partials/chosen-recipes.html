@@ -1,0 +1,45 @@
+{% for recipe_obj in chosen_recipes %}
+    <form
+            hx-post="{% url 'food_manager:manage_chosen_recipes' %}"
+            hx-target="#target"
+            hx-trigger="submit"
+    >
+        {% csrf_token %}
+        <div class="card w-96 bg-base-200 card-sm border m-4">
+            <div class="card-body">
+                <h2 class="card-title">
+                    {{ recipe_obj.recipe.name }}
+                    <span class="badge badge-xl">{{ recipe_obj.quantity }}X </span>
+                </h2>
+                <p>
+                    Produces {{ recipe_obj.total_kcal_produced }} kcal
+                </p>
+                <div class="justify-end card-actions">
+                    <button class="btn btn-error">
+                        Remove from blueprint
+                    </button>
+
+                    <input type="hidden" name="slug" value="{{ recipe_obj.slug }}">
+                    <input type="hidden" name="quantity" value="{{ recipe_obj.quantity }}" >
+                    <input type="hidden" name="action" value="remove">
+                </div>
+            </div>
+        </div>
+
+    </form>
+{% endfor %}
+
+
+<div class="card w-96 bg-base-200 card-sm border m-4">
+    <div class="card-body">
+        <h2 class="card-title">
+            Total kcal produced
+        </h2>
+        <p class="text-xl font-bold">
+            {{ sum_total }} kcal
+        </p>
+        <div class="justify-end card-actions"></div>
+    </div>
+</div>
+
+

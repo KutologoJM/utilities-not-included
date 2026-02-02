@@ -1,7 +1,11 @@
 from django.db import models
+from django_extensions.db.fields import AutoSlugField
+
 from accounts.models import CustomUser
+from food_manager.models import Recipe
 
 # Create your models here.
+
 
 class Hunger(models.Model):
     name = models.CharField(max_length=100)
@@ -13,7 +17,7 @@ class Hunger(models.Model):
 
 class Durability(models.Model):
     name = models.CharField(max_length=100)
-    rate_of_decay = models.PositiveIntegerField(default=10) # percentage
+    rate_of_decay = models.PositiveIntegerField(default=10)  # percentage
 
     def __str__(self):
         return self.name
@@ -49,7 +53,7 @@ class MeteorShowers(models.Model):
 
 class Stress(models.Model):
     name = models.CharField(max_length=100)
-    stress_rate = models.IntegerField(default=0) # percentage
+    stress_rate = models.IntegerField(default=0)  # percentage
 
     def __str__(self):
         return self.name
@@ -74,6 +78,7 @@ class Colony(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    slug = AutoSlugField(unique=True, populate_from="name", db_index=True)
 
     stress_reactions = models.BooleanField(default=True)
     sandbox_mode = models.BooleanField(default=False)
@@ -81,8 +86,12 @@ class Colony(models.Model):
     care_packages = models.BooleanField(default=True)
     save_to_cloud = models.BooleanField(default=False)
 
-    preset = models.CharField(choices=GameModePresets, max_length=100, default=GameModePresets.SURVIVAL)
-    asteroid_style = models.CharField(choices=AsteroidStyles, max_length=100, default=AsteroidStyles.CLASSIC)
+    preset = models.CharField(
+        choices=GameModePresets, max_length=100, default=GameModePresets.SURVIVAL
+    )
+    asteroid_style = models.CharField(
+        choices=AsteroidStyles, max_length=100, default=AsteroidStyles.CLASSIC
+    )
 
     hunger = models.ForeignKey("Hunger", on_delete=models.CASCADE)
     durability = models.ForeignKey("Durability", on_delete=models.CASCADE)
@@ -91,7 +100,9 @@ class Colony(models.Model):
     morale = models.ForeignKey("Morale", on_delete=models.CASCADE)
     meteorshowers = models.ForeignKey("MeteorShowers", on_delete=models.CASCADE)
     stress = models.ForeignKey("Stress", on_delete=models.CASCADE)
-    demolior_impact = models.ForeignKey("DemoliorImpact", on_delete=models.CASCADE, null=True)
+    demolior_impact = models.ForeignKey(
+        "DemoliorImpact", on_delete=models.CASCADE, null=True
+    )
 
     def __str__(self):
         return f"Colony: {self.name}"
@@ -101,6 +112,28 @@ class Planetoid(models.Model):
     colony = models.ForeignKey("Colony", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     dupe_population = models.PositiveIntegerField(default=0)
+    slug = AutoSlugField(unique=True, populate_from="name", db_index=True)
 
     def __str__(self):
         return f"{self.name} in {self.colony.name}"
+
+
+class Blueprint(models.Model):
+    planetoid = models.ForeignKey("Planetoid", on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, unique=True)
+    supportable_dupes = models.PositiveIntegerField(default=0)
+    survivable_cycles = models.PositiveIntegerField(default=0)
+    selected_foods = models.ManyToManyField(Recipe, through="BlueprintFoods")
+    slug = AutoSlugField(unique=True, populate_from="name", db_index=True)
+
+    def __str__(self):
+        return f"{self.name} for {self.planetoid.name}"
+
+
+class BlueprintFoods(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    blueprint = models.ForeignKey("Blueprint", on_delete=models.CASCADE)
+    amount = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.amount} x {self.recipe.name} for {self.blueprint.name}"

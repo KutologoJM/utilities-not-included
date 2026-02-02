@@ -28,7 +28,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Project Env managed
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG') == 'True'
+DEBUG = os.getenv('DEBUG_PROD') == 'True'
+
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
@@ -98,8 +99,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # custom
-                'UtilitiesNotIncluded.settings.context_processors.dev_timestamp',
             ],
         },
     },

@@ -1,0 +1,61 @@
+{% extends "cm_base.html" %}
+{% load static %}
+{% block head_title %} Blueprint Maker {% endblock %}
+{% block extra_head_element %} {% endblock %}
+{% block header %}{% endblock %}
+{% block main %}
+    <main class=" grid grid-cols-2 min-w-full">
+        <section class="text-center flex flex-col items-center">
+            <h1 class="text-5xl font-bold">
+                Recipe Search
+            </h1>
+
+            <form class="flex flex-col items-center">
+                {% csrf_token %}
+                <label for="recipe-search" class="input text-lg m-4">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                            type="text"
+                            name="recipe-search"
+                            id="recipe-search"
+                            placeholder="Search for a recipe"
+                            hx-post="{% url 'food_manager:search_recipes' %}"
+                            hx-trigger="changed, keyup delay:500ms"
+                            hx-target="#recipe-items"
+                            hx-indicator="#spinner"
+                            hx-include="#page-state"
+                    >
+                    {% include 'components/spinner.html' %}
+                    <input type="hidden" id="page-state" name="page" value="{{ recipes.number }}">
+                </label>
+            </form>
+
+            <div id="recipe-items">
+                {% include 'partials/recipe-cards.html' %}
+            </div>
+
+            <div id="pagination">
+                {% include "components/pagination.html" %}
+            </div>
+
+        </section>
+        <section class="text-center">
+            <h1 class="text-5xl font-bold">
+                Chosen Recipes
+            </h1>
+            <div
+                    hx-get="{% url 'food_manager:calculate_and_render_chosen_recipes' %}"
+                    hx-trigger="load"
+                    hx-target="#target"
+                    hx-swap="innerHTML"
+                    id="target"
+            >
+            </div>
+
+            <a class="btn btn-accent" href="{% url 'colony_manager:create-blueprint' %}">
+                Submit Blueprint
+            </a>
+        </section>
+    </main>
+{% endblock %}
+{% block footer %}{% endblock %}
