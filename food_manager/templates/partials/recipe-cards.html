@@ -1,0 +1,29 @@
+{% for recipe in recipes %}
+
+    <form
+            hx-post="{% url 'food_manager:manage_chosen_recipes' %}"
+            hx-target="#target"
+            hx-trigger="submit"
+    >
+        {% csrf_token %}
+        <div class="card w-96 bg-base-100 card-sm border m-4">
+            <div class="card-body">
+                <h2 class="card-title">{{ recipe.name }}</h2>
+                <p>{{ recipe.description }}</p>
+                <div class="justify-end card-actions">
+                    <label for="quantity">
+                        <input id="quantity" type="number" name="quantity" value="1" class="input w-20">
+                    </label>
+                    <button class="btn btn-secondary">
+                        Add
+                    </button>
+                    <input type="hidden" name="slug" value="{{ recipe.slug }}">
+                    <input type="hidden" name="action" value="add">
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endfor %}
+

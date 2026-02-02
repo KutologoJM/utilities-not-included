@@ -1,6 +1,5 @@
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
-from colony_manager.models import Colony
 
 
 # Create your models here.
@@ -40,26 +39,37 @@ class Recipe(models.Model):
     kcal_per_kg = models.PositiveIntegerField(null=True, blank=True)
     food_gained = models.CharField(max_length=100, blank=True)
 
-    slug = AutoSlugField(unique=True, populate_from='name', db_index=True)
+    slug = AutoSlugField(unique=True, populate_from="name", db_index=True)
 
     sources = models.ForeignKey("FoodItemSource", on_delete=models.PROTECT)
     food_quality = models.ForeignKey("FoodQuality", on_delete=models.PROTECT, null=True)
 
     is_ingredient = models.BooleanField(default=False)
-    ingredients = models.ManyToManyField("self", blank=True, through="RecipeIngredient", related_name="used_in",
-                                         symmetrical=False)
+    ingredients = models.ManyToManyField(
+        "self",
+        blank=True,
+        through="RecipeIngredient",
+        related_name="used_in",
+        symmetrical=False,
+    )
 
     @property
     def required_ingredients(self):
         # Use the prefetched list if available, fallback to DB query
-        return getattr(self, 'prefetched_required_ingredients',
-                       self.recipe_ingredients.filter(role=RecipeIngredient.Roles.REQUIRED))
+        return getattr(
+            self,
+            "prefetched_required_ingredients",
+            self.recipe_ingredients.filter(role=RecipeIngredient.Roles.REQUIRED),
+        )
 
     @property
     def substitutable_ingredients(self):
         # Use the prefetched list if available, fallback to DB query
-        return getattr(self, 'prefetched_required_ingredients',
-                       self.recipe_ingredients.filter(role=RecipeIngredient.Roles.SUBSTITUTABLE))
+        return getattr(
+            self,
+            "prefetched_required_ingredients",
+            self.recipe_ingredients.filter(role=RecipeIngredient.Roles.SUBSTITUTABLE),
+        )
 
     class Meta:
         verbose_name = "Recipe"
@@ -75,7 +85,7 @@ class FoodItemSource(models.Model):
     image_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
 
-    slug = AutoSlugField(unique=True, populate_from='name')
+    slug = AutoSlugField(unique=True, populate_from="name")
 
     def __str__(self):
         return self.name
@@ -101,8 +111,12 @@ class RecipeIngredient(models.Model):
         UNITS = "units", "Units"
         GRAMS = "g", "Grams"
 
-    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE, related_name="recipe_ingredients")
-    ingredient = models.ForeignKey("Recipe", on_delete=models.CASCADE, related_name="ingredient_in")
+    recipe = models.ForeignKey(
+        "Recipe", on_delete=models.CASCADE, related_name="recipe_ingredients"
+    )
+    ingredient = models.ForeignKey(
+        "Recipe", on_delete=models.CASCADE, related_name="ingredient_in"
+    )
     role = models.CharField(choices=Roles, default=Roles.REQUIRED, max_length=10)
     amount = models.PositiveIntegerField(default=0)
     unit = models.CharField(choices=Units, default=Units.KCAL, max_length=10)
@@ -114,25 +128,3 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.amount} {self.unit} of {self.ingredient.name} for {self.recipe.name}"
-
-
-class BlueprintFoods(models.Model):
-    recipe = models.ForeignKey("Recipe", on_delete=models.CASCADE)
-    blueprint = models.ForeignKey("Blueprint", on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField(default=0)
-
-    def __str__(self):
-        return f"{self.amount} x {self.recipe.name} for {self.blueprint.name}"
-
-
-class Blueprint(models.Model):
-    colony = models.ForeignKey(Colony, on_delete=models.PROTECT)
-    name = models.CharField(max_length=50, unique=True)
-    supportable_dupes = models.PositiveIntegerField(default=0)
-    survivable_cycles = models.PositiveIntegerField(default=0)
-    selected_foods = models.ManyToManyField(
-        "Recipe", through="BlueprintFoods"
-    )
-
-    def __str__(self):
-        return f"{self.name} for {self.colony.name}"
