@@ -27,37 +27,15 @@ class KcalCalculator:
 
     def calculate_total_kcal_produced(self):
         recipe: Recipe = self.get_recipe_instance()
-        self.kcal_produced = int(recipe.food_gained.split("kcal")[0])
+        try:
+            self.kcal_produced = int(recipe.food_gained.split("kcal")[0]) # fails to certain foods
+        except ValueError:
+            self.kcal_produced = 0
         self.total_kcal_produced = self.kcal_produced * self.quantity
         return self.total_kcal_produced
-
-
-user_provided_data = [
-    {
-        "slug": "frost-burger",
-        "quantity": 5,
-    },
-    {
-        "slug": "veggie-poppers",
-        "quantity": 4,
-    },
-    {
-        "slug": "tender-brisket",
-        "quantity": 3,
-    },
-]  # a list of user chosen recipes
-
-results = []
-
-for data in user_provided_data:
-    slug_ = data["slug"]
-    quantity_ = data["quantity"]
-
-    object_ = KcalCalculator(slug_, quantity_)
-    object_.calculate_total_kcal_produced()
-    results.append(object_)
-    print(object_.recipe.name)
-    print(object_.total_kcal_produced)
-    print(object_)
-
-print(results)
+# todo fix
+"""
+todo fix incompatibility with
+ValueError: invalid literal for int() with base 10: '5 kg - 12 kg'
+from
+"""
