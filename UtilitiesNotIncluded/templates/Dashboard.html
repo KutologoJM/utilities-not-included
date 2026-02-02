@@ -24,9 +24,9 @@
         <div>
             <h2>Colony Manager</h2>
             <p>
-                <button class="btn btn-primary"><a href="{% url 'colony_manager:colony_index' %}">Colony</a></button>
-                <button class="btn btn-primary"><a href="{% url 'colony_manager:planetoid_index' colony='Test Colony' %}">Planetoid</a></button>
-                <button class="btn btn-primary"><a href="{% url 'colony_manager:blueprint_index' colony='Test Colony' planetoid='Test Planetoid' %}">Blueprint</a></button>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:index' %}">Colony</a></button>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:planetoid-index' colony='Test Colony' %}">Planetoid</a></button>
+                <button class="btn btn-primary"><a href="{% url 'colony_manager:blueprint-index' colony='Test Colony' planetoid='Test Planetoid' %}">Blueprint</a></button>
             </p>
         </div>
 
