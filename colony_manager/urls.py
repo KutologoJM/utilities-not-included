@@ -1,29 +1,20 @@
 from django.urls import path
-
 from colony_manager import views
 
-app_name = "colony_manager"
+app_name = 'colony_manager'
 
 urlpatterns = [
+    # path('url/', views.view, name='url'), keep name the same as the url or a more readable version of it
+    path('', views.Index.as_view(), name='index'),
+    path('create-colony/', views.create_colony, name='create-colony'),
+    path("edit/<str:colony>/", views.edit_colony, name="edit-colony"),
+    path("<str:colony>/planetoid/", views.planetoid_index, name="planetoid-index"),
+    path("<str:colony>/create/planetoid/", views.create_planetoid, name="create-planetoid"),
     path(
-        "colony/", views.colony_index, name="colony_index"
-    ),  # this view shows the colonies and add colony option
-    path("create/colony/", views.colony_creator, name="create_colony"),
-    path("manage/<str:colony>/", views.colony_editor, name="manage_colony"),
-    path("<str:colony>/planetoid/", views.planetoid_index, name="planetoid_index"),
-    path(
-        "<str:colony>/create/planetoid/",
-        views.planetoid_creator,
-        name="create_planetoid",
-    ),
-    path(
-        "<str:colony>/manage/<str:planetoid>/",
-        views.planetoid_editor,
-        name="manage_planetoid",
-    ),
-    path(
-        "<str:colony>/<str:planetoid>/blueprint/",
-        views.blueprint_index,
-        name="blueprint_index",
-    ),
+        "<str:colony>/edit/<str:planetoid>/", views.edit_planetoid, name="edit-planetoid"),
+    path("<str:colony>/<str:planetoid>/blueprint/", views.blueprint_index, name="blueprint-index"),
+    path("<str:colony>/<str:planetoid>/blueprint/blueprint-maker/", views.blueprint_maker, name="blueprint-maker"),
+    path('create-blueprint/', views.create_blueprint, name='create-blueprint'),
+    path('blueprint-creation-success/', views.blueprint_creation_success, name='blueprint-creation-success'),
+
 ]
