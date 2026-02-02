@@ -1,7 +1,7 @@
-# settings/local.py
+# settings/dev.py
 from .base import *  # noqa: F403
 
-DEBUG = True
+DEBUG = os.getenv("DEBUG_DEV")
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
@@ -10,7 +10,7 @@ INTERNAL_IPS = [
 ]
 
 
-INSTALLED_APPS += ["debug_toolbar", "django_browser_reload"]  # noqa: F405
+INSTALLED_APPS += ["debug_toolbar", "django_browser_reload", "django_watchfiles",]  # noqa: F405
 
 MIDDLEWARE.insert(2, "debug_toolbar.middleware.DebugToolbarMiddleware")  # noqa: F405
 MIDDLEWARE.insert(
