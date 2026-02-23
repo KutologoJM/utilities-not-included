@@ -51,6 +51,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "whitenoise",
     "django_extensions",
+    "health_check"
 ]
 
 LOCAL_APPS = [
@@ -143,3 +144,7 @@ STATICFILES_DIRS = [
 
 # Whitenoise config
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Health Check
+# https://codingjoe.dev/django-health-check/
+HEALTH_CHECK_TOKEN = os.getenv('HEALTH_CHECK_TOKEN')

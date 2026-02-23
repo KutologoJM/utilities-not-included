@@ -4,6 +4,7 @@ from django_extensions.db.fields import AutoSlugField
 from accounts.models import CustomUser
 from food_manager.models import Recipe
 
+
 # Create your models here.
 
 
@@ -14,6 +15,10 @@ class Hunger(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Hunger"
+        verbose_name_plural = "Hunger"
+
 
 class Durability(models.Model):
     name = models.CharField(max_length=100)
@@ -22,12 +27,20 @@ class Durability(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Durability"
+        verbose_name_plural = "Durabilities"
+
 
 class Radiation(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Radiation"
+        verbose_name_plural = "Radiation"
 
 
 class Disease(models.Model):
@@ -36,6 +49,10 @@ class Disease(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Disease"
+        verbose_name_plural = "Diseases"
+
 
 class Morale(models.Model):
     name = models.CharField(max_length=100)
@@ -43,12 +60,20 @@ class Morale(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Morale"
+        verbose_name_plural = "Morales"
+
 
 class MeteorShowers(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Meteor Showers"
+        verbose_name_plural = "Meteor Showers"
 
 
 class Stress(models.Model):
@@ -58,12 +83,20 @@ class Stress(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Stress"
+        verbose_name_plural = "Stress"
+
 
 class DemoliorImpact(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = "Demolior Impact"
+        verbose_name_plural = "Demolior Impacts"
 
 
 class Colony(models.Model):
@@ -107,6 +140,10 @@ class Colony(models.Model):
     def __str__(self):
         return f"Colony: {self.name}"
 
+    class Meta:
+        verbose_name = "Colony"
+        verbose_name_plural = "Colonies"
+
 
 class Planetoid(models.Model):
     colony = models.ForeignKey("Colony", on_delete=models.CASCADE)
@@ -116,6 +153,10 @@ class Planetoid(models.Model):
 
     def __str__(self):
         return f"{self.name} in {self.colony.name}"
+
+    class Meta:
+        verbose_name = "Planetoid"
+        verbose_name_plural = "Planetoids"
 
 
 class Blueprint(models.Model):
@@ -137,3 +178,7 @@ class BlueprintFoods(models.Model):
 
     def __str__(self):
         return f"{self.amount} x {self.recipe.name} for {self.blueprint.name}"
+
+    class Meta:
+        verbose_name = "Blueprint Food"
+        verbose_name_plural = "Blueprint Foods"

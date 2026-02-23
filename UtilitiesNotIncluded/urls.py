@@ -18,12 +18,37 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from health_check.views import HealthCheckView
+
 from accounts.views import Dashboard
 
 
 urlpatterns = [
     path("", Dashboard.as_view(), name="dashboard"),
     path("admin/", admin.site.urls),
+    # Health Check docs https://codingjoe.dev/django-health-check/
+    path(
+        f"health/{settings.HEALTH_CHECK_TOKEN}/",
+        HealthCheckView.as_view(
+            checks=[
+                "health_check.DNS",
+                "health_check.Cache",
+                "health_check.Database",
+                "health_check.Mail",
+                "health_check.Storage",
+                # 3rd party checks
+                "health_check.contrib.psutil.Battery",
+                "health_check.contrib.psutil.CPU",
+                "health_check.contrib.psutil.Memory",
+                "health_check.contrib.psutil.Disk",
+                "health_check.contrib.psutil.Temperature",
+                # "health_check.contrib.celery.Ping",
+                # "health_check.contrib.redis.Redis",
+                # "health_check.contrib.atlassian.Cloudflare",
+                "health_check.contrib.atlassian.Render",
+            ]
+        ),
+    ),
     path("accounts/", include("accounts.urls")),
     path("food_manager/", include("food_manager.urls")),
     path("colony_manager/", include("colony_manager.urls")),

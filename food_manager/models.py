@@ -89,6 +89,9 @@ class FoodItemSource(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = "Food Item Source"
+        verbose_name_plural = "Food Item Sources"
 
 
 class FoodItemDLC(models.Model):
@@ -98,6 +101,9 @@ class FoodItemDLC(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = "Food Item DLC"
+        verbose_name_plural = "Food Item DLCs"
 
 
 class RecipeIngredient(models.Model):
